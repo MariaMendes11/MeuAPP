@@ -2,7 +2,7 @@ import React, {useState} from "react";
 import { View, Text, TextInput, TouchableOpacity, Alert, StyleSheet } from "react-native";
 import api from '../axios/axios'
 
-export default function Cadastro(){
+export default function Cadastro({ navigation }){
     const [user,setUser] = useState({
         name:"",
         email:"",
@@ -16,6 +16,7 @@ export default function Cadastro(){
             (response)=>{
                 console.log(response.data.message)
                 Alert.alert("OK",response.data.message)
+                navigation.navigate("Home")
             },(error)=>{
                     Alert.alert("ERRO",error.response.data.error)
                     console.log(error);

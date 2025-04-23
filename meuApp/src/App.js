@@ -1,7 +1,7 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import EventoScreen from './screens/EventoScreen';
+
 import LoginScreen from './screens/LoginScreen';
 import CadastroScreen from './screens/CadastroScreen';
 import HomeScreen from './screens/HomeScreen';
@@ -13,6 +13,7 @@ import Login from "./screens/LoginScreen";
 import Cadastro from "./screens/CadastroScreen"
 import TaskList from './screens/TaskList';
 import TaskDetail from './screens/TaskDetail';
+import EventoScreen from './screens/EventoScreen';
 
 const Stack = createStackNavigator();
 
@@ -20,8 +21,6 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        {/* <Stack.Screen name="TaskList"component={TaskList}/>
-        <Stack.Screen name="TaskDetail"component={TaskDetail}/>  */}
         <Stack.Screen 
           name="Login" 
           component={()=>(
@@ -44,6 +43,13 @@ export default function App() {
         <Stack.Screen 
           name="CadastroIngresso" 
           component={CadastroIngressoScreen} />
+          <Stack.Screen name="EventoScreen">
+            {() => (
+              <Layout>
+                <EventoScreen/>
+              </Layout>
+            )}
+          </Stack.Screen>
       </Stack.Navigator>
     </NavigationContainer>
   );

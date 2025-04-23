@@ -1,4 +1,4 @@
-import { useSyncExternalStore, useState, useEffect } from "react";
+import {  useEffect ,useState } from "react";
 import api from "../axios/axios"
 import{
     View,
@@ -8,28 +8,39 @@ import{
     Modal,
     StyleSheet,
     ActivityIndicator
-}from "react -native"
-import { ReloadInstructions } from "react-native/Libraries/NewAppScreen";
+}from "react-native"
 
-export default function EventoScreen(){
+export default function EventoScreen({navigation}){
     const [eventos,setEventos] = useState([]);
     const [ingressos,setIngressos] = useState([]);
     const [modalVisible, setModalVisible] = useState(false);
     const [loandig, setLoading] = useState(true);
-    const [eventosSelecionado, setEvento] =useState(null);
+    const [eventosSelecionado, setEventoSelecionado] = useState('');
 
     useEffect(()=>{
         getEventos();
-    })
+    }, []);
 
     async function getEventos(){
         try{
             const response = await api.getEventos();
-            console.log(response.data)
-            setEventos(response.data.events)
+            console.log(response.data);
+            setEventos(response.data.events);
             setLoading(false);
         } catch(error){
             console.log(error.response.data.error)
+        }
+    }
+
+    async function abrirModalComIngressos(evento) {
+      setEventoSelecionado(evento);
+      setModalVisible(true);
+
+      try{
+          const response = await api.getIngressosPorEvento(evento.id_evento)
+          setIngressos(response.data.ingressos);
+        } catch (error) {
+          console.log("Error ao buscar ingressos", error.response);
         }
     }
 
@@ -42,14 +53,44 @@ export default function EventoScreen(){
             renderItem={({item})=>(
                 <TouchableOpacity
                 style={styles.eventCard}
-                onPress={()=> console.log("Abrir o Modal")}
+                onPress={()=> abrirModalComIngressos(item)}
                 >
                     <Text style={styles.eventName}>{item.nome}</Text>
                     <Text>{item.local}</Text>
-                    <Text>{new Date (item.data_hora).toLocaleString}</Text>
+                    <Text>{new Date (item.data_hora).toLocaleString()}</Text>
                 </TouchableOpacity>
             )}
             />}
+            <Modal
+            visible={modalVisible}
+            onRequestClose={()=> setModalVisible(false)}
+            animationType="slide"
+            >
+              <View style={styles.modalContainer}>
+                <Text>
+                  ingressos para: {eventosSelecionado.nome}
+                </Text>
+               {ingressos.length === 0 ? (
+                <Text> Nenhum ingresso encontrado </Text>
+               ): (
+                <FlatList
+                data={ingressos}
+                keyExtractor={(item)=>item.id_ingresso.toString()}
+                renderItem={({item})=>(
+                  <View>
+                    <Text>Tipo: {item.tipo}</Text>
+                    <Text>Preço: R${item.preco}</Text>
+                  </View>
+                )}
+                />
+               )}
+               <TouchableOpacity styletyle={styles.closeButton}
+               onPress={()=>setModalVisible(false)}
+               >
+                <Text style={{color:"white"}}>Fechar</Text>
+               </TouchableOpacity>
+              </View>
+            </Modal>
         </View>
     );
 }

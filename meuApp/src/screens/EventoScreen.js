@@ -8,9 +8,11 @@ import{
     Modal,
     StyleSheet,
     ActivityIndicator
-}from "react-native"
+}from "react-native";
+import * as SecureStore from 'expo-secure-store';
+import { useNavigation } from '@react-navigation/native';
 
-export default function EventoScreen({navigation}){
+export default function EventoScreen(){
     const [eventos,setEventos] = useState([]);
     const [ingressos,setIngressos] = useState([]);
     const [modalVisible, setModalVisible] = useState(false);
@@ -44,8 +46,15 @@ export default function EventoScreen({navigation}){
         }
     }
 
+    const navigation = useNavigation()
     return(
         <View style={styles.container}>
+          <TouchableOpacity 
+          onPress={() => {
+            navigation.navigate("CadastroEvento")
+          }}>
+            <Text>Criar novo evento</Text>
+          </TouchableOpacity>
             <Text style={styles.title}>Eventos Disponíveis</Text>
             {loandig ? <ActivityIndicator size="large"color="blue"/> : <FlatList 
             data={eventos}
